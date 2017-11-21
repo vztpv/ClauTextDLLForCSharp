@@ -17,38 +17,46 @@ namespace wiz {
 		return gcnew System::String(s.c_str());
 	}
 
+	ClauText::ClauText() {
+		global = new wiz::ClauTextLib();
+	}
+	ClauText::~ClauText() {
+		this->!ClauText();
+	}
+	ClauText::!ClauText() {
+		delete global;
+	}
 	/// Clear
-	void ClauText::ClearData()
+	void ClauText::Clear()
 	{
-		global->Remove();
+		global->Clear();
 	}
 	/// LoadDataFromFile ( load data )
 	void ClauText::LoadDataFromFile(System::String^ fileName) {
 		std::string _fileName = Convert(fileName);
 
-		wiz::load_data::LoadData::LoadDataFromFile(_fileName, *global);
+		global->LoadDataFromFile(_fileName);
 	}
 	/// LoadDataFromString ( load data )
 	void ClauText::LoadDataFromString(System::String^ data) {
 		std::string _data = Convert(data);
 
-		wiz::load_data::LoadData::LoadDataFromString(_data, *global);
+		global->LoadDataFromString(_data);
 	}
 	/// SaveData
 	void ClauText::SaveData(System::String^ fileName) {
 		std::string _fileName = Convert(fileName);
 
-		wiz::load_data::LoadData::SaveWizDB(*global, _fileName, "1"); // EU4 "1", JSON "3"
+		global->SaveData(_fileName); 
 	}
 	/// RunEvent ( load event and run event )
-	System::String^ ClauText::RunEvent(System::String^ eventData) {
+	System::String^ ClauText::RunEventString(System::String^ eventData) {
 		std::string _eventData = Convert(eventData);
-		wiz::StringBuilder builder(102400);
+		return Convert(global->RunEventString(_eventData));
+	}
 
-		wiz::load_data::LoadData::AddData(*global, "/./", _eventData, "TRUE", ExcuteData(), &builder);
-
-		System::String^ result = Convert(excute_module("", global, ExcuteData(), 0));
-
-		return result;
+	System::String^ ClauText::RunEventFile(System::String^ fileName) {
+		std::string _fileName = Convert(fileName);
+		return Convert(global->RunEventFile(_fileName));
 	}
 }
